@@ -1,7 +1,9 @@
-from django.contrib import admin
-from django.urls import path, include, re_path
+from django.urls import path
 from adapter import views
 
 urlpatterns = [
-    re_path(r'objects$', views.thing_description),
+    path('room-overview', views.rooms_info),
+    path('clean-room/<int:room_id>', views.clean_room),
+    path('objects', views.thing_description),
+    path('objects/<subscriber_id>/events/<eid>', views.receive_event),
 ]
