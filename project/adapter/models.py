@@ -41,3 +41,10 @@ class CleaningHistory(models.Model):
     number_of_visits = models.IntegerField()
     threshold = models.IntegerField()
     who = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+def get_users_full_name(user):
+    if user.first_name == '' and user.last_name == '':
+        return user.username
+    else:
+        return f'{user.first_name} {user.last_name}'

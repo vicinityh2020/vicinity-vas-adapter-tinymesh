@@ -7,8 +7,9 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.utils.dateparse import parse_datetime
+from django.views import View
 
-from adapter.models import Event, Room, CleaningHistory
+from adapter.models import Event, Room, CleaningHistory, get_users_full_name
 
 logger = logging.getLogger("adapter")
 
@@ -60,22 +61,50 @@ def receive_event(request, subscriber_id, eid):
 def rooms_info(request):
     response_body = []
     rooms = Room.objects.all()
+
     for room in rooms:
-        response_body.append({
-            'id': room.id,
-            'name': room.name,
-            'visits': room.visits / 2,
-            'needsCleaning': (room.visits / 2) > room.threshold
-        })
+        try:
+            last_cleaned = CleaningHistory.objects.filter(room=room).order_by('-datetime').latest('datetime')
+        except CleaningHistory.DoesNotExist:
+            last_cleaned = None
+
+        if last_cleaned is None:
+            response_body.append({
+                'id': room.id,
+                'name': room.name,
+                'visits': room.visits / 2,
+                'lastCleaned': 'Never',
+                'needsCleaning': (room.visits / 2) > room.threshold
+            })
+        else:
+            response_body.append({
+                'id': room.id,
+                'name': room.name,
+                'visits': room.visits / 2,
+                'lastCleaned': last_cleaned.datetime,
+                'needsCleaning': (room.visits / 2) > room.threshold
+            })
 
     return JsonResponse(response_body, safe=False)
 
 
-@csrf_exempt
-def clean_room(request, room_id):
-    if request.method == "POST":
-        req_body = json.loads(request.body)
-        print(req_body)
+# @method_decorator(csrf_exempt, name='dispatch')
+class CleaningView(View):
+    @staticmethod
+    def get(request, room_id):
+        cleaning_history = CleaningHistory.objects.filter(room_id=room_id)
+        resp_body = []
+        for cleaning_event in cleaning_history:
+            resp_body.append({
+                "datetime": cleaning_event.datetime,
+                "visits": cleaning_event.number_of_visits,
+                "cleanedBy": get_users_full_name(cleaning_event.who),
+                "threshold": cleaning_event.threshold
+            })
+        return JsonResponse(resp_body, safe=False)
+
+    @staticmethod
+    def post(request, room_id):
         room = Room.objects.get(id=room_id)
         clean_event = CleaningHistory(room=room,
                                       datetime=datetime.utcnow(),
@@ -98,5 +127,4 @@ def clean_room(request, room_id):
             all_events_for_room.delete()
         else:
             logger.debug(f"No events for room: \"{room.name}\"[id:{room.id}]")
-
-    return JsonResponse({"OK": True})
+        return JsonResponse({"OK": 'True'})
