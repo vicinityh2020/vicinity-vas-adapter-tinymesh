@@ -7,6 +7,11 @@ class Room(models.Model):
     door_eid = models.CharField(max_length=100, unique=True)
     threshold = models.IntegerField(default=50)
     visits = models.IntegerField(default=0)
+    notification_sent = models.BooleanField(default=False)
+    notification_phone_number = models.CharField(max_length=8)
+
+    def set_notification_status(self, state):
+        self.notification_sent = state
 
     def __str__(self):
         return self.name
@@ -47,4 +52,4 @@ def get_users_full_name(user):
     if user.first_name == '' and user.last_name == '':
         return user.username
     else:
-        return f'{user.first_name} {user.last_name}'
+        return "{first_name} {last_name}".format(first_name=user.first_name, last_name=user.last_name)

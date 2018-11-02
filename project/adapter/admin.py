@@ -8,7 +8,7 @@ class EventAdmin(admin.ModelAdmin):
 
 
 class RoomAdmin(admin.ModelAdmin):
-    list_display = ('name', 'door_eid', 'threshold')
+    list_display = ('name', 'door_eid', 'threshold', 'visits', 'notification_sent')
 
 
 class CleaningHistoryAdmin(admin.ModelAdmin):
