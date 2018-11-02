@@ -24,7 +24,7 @@ SECRET_KEY = '-wy+)!lmoy-(u-%!44n&658ul*c)^oogo3yavbg1^x^6art%15'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["0.0.0.0", "192.168.1.147", "localhost", "192.168.1.100", "127.0.0.1"]
 
 # Application definition
 
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'django.middleware.gzip.GZipMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -114,9 +115,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.0/howto/static-files/
-STATIC_URL = '/adapter/static/'
 
 LOGGING = {
     'version': 1,
@@ -147,7 +145,11 @@ LOGGING = {
     }
 }
 
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/2.0/howto/static-files/
+STATIC_URL = '/static/'
 REACT_APP_DIR = os.path.join(BASE_DIR, 'frontend')
+STATIC_ROOT = os.path.join(BASE_DIR, 'frontend', '')
 
 STATICFILES_DIRS = [
     os.path.join(REACT_APP_DIR, 'build', 'static'),
@@ -160,3 +162,21 @@ STATICFILES_DIRS = [
 ADAPTER_ID = "80f74161-7936-4a8f-96bc-8882f60cfcf8"
 SERVICE_ID = "4b516f57-0097-4789-8cbd-45ff25ea9809"
 SERVICE_NAME = "TinyMeshVAS 1"
+
+# celery settings
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Europe/Oslo'
+CELERY_BEAT_SCHEDULE = {
+    'adapter.tasks.room_check': {
+        'task': 'adapter.tasks.room_check',
+        'schedule': 10.0,  # how often to run the task in seconds
+    },
+}
+
+# KeySMS Settings
+KEYSMS_LOGIN = os.environ.get('KEYSMS_LOGIN')
+KEYSMS_API_KEY = os.environ.get('KEYSMS_API_KEY')

@@ -4,6 +4,7 @@ from datetime import datetime
 
 from django.contrib.auth.models import User
 from django.http import JsonResponse
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.utils.dateparse import parse_datetime
@@ -11,11 +12,14 @@ from django.views import View
 
 from adapter.models import Event, Room, CleaningHistory, get_users_full_name
 
+from yr import Weather
+
 logger = logging.getLogger("adapter")
 
 
 @csrf_exempt
 def thing_description(request):
+    print()
     description = {
         "adapter-id": settings.ADAPTER_ID,
         "thing-descriptions": [
@@ -29,7 +33,8 @@ def thing_description(request):
             }
         ]
     }
-
+    resp = JsonResponse(description)
+    resp.set_cookie("test", "value", domain='127.0.0.1')
     return JsonResponse(description)
 
 
@@ -88,7 +93,16 @@ def rooms_info(request):
     return JsonResponse(response_body, safe=False)
 
 
-# @method_decorator(csrf_exempt, name='dispatch')
+def fetch_weather_moss(resp):
+    weather = Weather()
+    temp, percp = weather.get_forecast("Østfold/Moss/Moss", url_path=True)
+    return JsonResponse({
+        "temp": temp,
+        "percp": percp
+    })
+
+
+@method_decorator(csrf_exempt, name='dispatch')
 class CleaningView(View):
     @staticmethod
     def get(request, room_id):
@@ -112,7 +126,7 @@ class CleaningView(View):
                                       threshold=room.threshold,
                                       who=User.objects.get(username="admin"))
         room.visits = 0
-
+        room.notification_sent = False
         logger.debug("Saving updated room object and adding entry to history")
         logger.debug(f"HistoryEntry: \n"
                      f"\tRoom Name: {clean_event.room.name}\n"
