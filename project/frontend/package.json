@@ -1,0 +1,39 @@
+{
+  "name": "tinym-vas",
+  "version": "0.1.0",
+  "private": true,
+  "proxy": {
+    "/adapter/*": {
+      "target": "http://localhost:8000",
+      "pathRewrite": {
+        "^/adapter/objects": "/objects",
+        "^/adapter/weather": "/weather",
+        "^/adapter/clean-room/*": "/clean-room/",
+        "^/adapter/room-overview": "/room-overview"
+      }
+    }
+  },
+  "dependencies": {
+    "immutability-helper": "^2.7.0",
+    "moment": "^2.22.2",
+    "prop-types": "^15.6.1",
+    "react": "^16.4.0",
+    "react-bootstrap": "^0.32.1",
+    "react-cookie": "^2.2.0",
+    "react-dom": "^16.4.0",
+    "react-router": "^4.2.0",
+    "react-router-dom": "^4.2.2",
+    "react-scripts": "1.1.4"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.2.3",
+    "eslint": "^4.19.1",
+    "eslint-plugin-react": "^7.9.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
