@@ -9,12 +9,18 @@ class Overview extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            loggedIn: localStorage.getItem('token') ? true : false,
             showInfo: false,
             rooms: null,
-            weather: null
+            weather: null,
+            user: ""
         };
         this.cleanRoom = this.cleanRoom.bind(this);
         this.updateRoomInfo = this.updateRoomInfo.bind(this);
+        if (this.state.loggedIn === false){
+            // eslint-disable-next-line react/prop-types
+            this.props.history.push( '/')
+        }
     }
 
     cleanRoom(roomNumber) {

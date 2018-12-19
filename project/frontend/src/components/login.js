@@ -1,7 +1,25 @@
 import React, {Component} from 'react';
-import {Button, Checkbox, Col, ControlLabel, Form, FormControl, FormGroup, Row} from "react-bootstrap";
+import {Button, Col, ControlLabel, Form, FormControl, FormGroup, Row} from "react-bootstrap";
 
 class Login extends Component {
+    constructor(props) {
+        super(props);
+        // noinspection RedundantConditionalExpressionJS
+        this.state = {
+            username: "",
+            password: "",
+            loggedIn: localStorage.getItem('token') ? true : false
+        };
+
+        this.changePass = this.changePass.bind(this);
+        this.changeLogin = this.changeLogin.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+
+        if (this.state.loggedIn === true) {
+            this.props.history.push('/overview')
+        }
+    }
+
     render() {
         return (
             <Row>
@@ -12,7 +30,7 @@ class Login extends Component {
                                 Email
                             </Col>
                             <Col xs={12} lg={6}>
-                                <FormControl type="email" placeholder="Email"/>
+                                <FormControl type="email" onChange={this.changeLogin} placeholder="Email"/>
                             </Col>
                         </FormGroup>
 
@@ -21,22 +39,46 @@ class Login extends Component {
                                 Password
                             </Col>
                             <Col xs={12} lg={6}>
-                                <FormControl type="password" placeholder="Password"/>
+                                <FormControl type="password" onChange={this.changePass} placeholder="Password"/>
                             </Col>
                         </FormGroup>
 
                         <FormGroup>
                             <Col xs={3} lg={1} lgOffset={3}>
-                                <Button type="submit" href={"/overview"}>Sign in</Button>
-                            </Col>
-                            <Col xs={6} lg={3}>
-                                <Checkbox>Remember me</Checkbox>
+                                <Button type="submit" onClick={this.handleSubmit}>Sign in</Button>
                             </Col>
                         </FormGroup>
                     </Form>
                 </Col>
             </Row>
         );
+    }
+
+    changePass(event) {
+        this.setState({password: event.target.value});
+    }
+
+    changeLogin(event) {
+        this.setState({username: event.target.value});
+    }
+
+    handleSubmit() {
+        fetch("/adapter/login", {
+            method: 'POST',
+            credentials: "include",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "password": this.state.password,
+                "username": this.state.username
+            })
+        }).then(value => {
+            return value.json();
+        }).then(json => {
+            localStorage.setItem("token", json.token);
+            this.props.history.push('/overview');
+        }).catch(reason => console.log(reason))
     }
 }
 
