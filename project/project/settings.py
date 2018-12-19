@@ -24,8 +24,8 @@ SECRET_KEY = '-wy+)!lmoy-(u-%!44n&658ul*c)^oogo3yavbg1^x^6art%15'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["0.0.0.0", "192.168.1.147", "localhost", "192.168.1.100", "127.0.0.1"]
-
+ALLOWED_HOSTS = ["0.0.0.0", "192.168.1.147", "localhost", "192.168.1.100", "127.0.0.1", "192.168.0.119"]
+APPEND_SLASH = True
 # Application definition
 
 INSTALLED_APPS = [
@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'knox',
     'corsheaders',
     'adapter'
 ]
@@ -50,6 +51,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',),
+}
 
 ROOT_URLCONF = 'project.urls'
 

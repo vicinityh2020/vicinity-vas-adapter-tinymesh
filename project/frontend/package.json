@@ -4,13 +4,7 @@
   "private": true,
   "proxy": {
     "/adapter/*": {
-      "target": "http://localhost:8000",
-      "pathRewrite": {
-        "^/adapter/objects": "/objects",
-        "^/adapter/weather": "/weather",
-        "^/adapter/clean-room/*": "/clean-room/",
-        "^/adapter/room-overview": "/room-overview"
-      }
+      "target": "http://localhost:8000"
     }
   },
   "dependencies": {

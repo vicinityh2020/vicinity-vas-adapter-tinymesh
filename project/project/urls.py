@@ -18,13 +18,15 @@ from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import path, include
 
+from auth import urls as endpoints
 from project import views
 
 urlpatterns = [
     path('adapter/', include('adapter.urls')),
-    path('adapter/admin/', admin.site.urls),
+    path('adapter/admin', admin.site.urls),
+    path('api/', include(endpoints)),
+    path('api/auth/', include('knox.urls')),
     url(r'^', views.FrontendAppView.as_view())
-    # path('', views.FrontendAppView.as_view()),
 ]
 
 

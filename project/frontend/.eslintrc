@@ -6,5 +6,11 @@
   "globals": {
     "fetch": false
   },
+  "env": {
+    "browser": true
+  },
+  "rules": {
+    "no-console": "off"
+  },
   "extends": ["eslint:recommended", "plugin:react/recommended"]
 }
