@@ -1,18 +1,23 @@
 import json
 import logging
 from datetime import datetime
+from pprint import pprint
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.http import JsonResponse
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
-from django.conf import settings
 from django.utils.dateparse import parse_datetime
+from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.csrf import csrf_exempt
+from knox.auth import TokenAuthentication
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from yr import Weather
 
 from adapter.models import Event, Room, CleaningHistory, get_users_full_name
-
-from yr import Weather
 
 logger = logging.getLogger("adapter")
 
@@ -34,6 +39,27 @@ def thing_description(request):
     }
     return JsonResponse(description)
 
+
+@api_view(['POST'])
+@permission_classes((IsAuthenticated,))
+def update_room_settings(request):
+    pprint(request.data)
+    resp = {"OK": True}
+    try:
+        room = Room.objects.get(id=request.data['id'])
+    except Room.DoesNotExist as ex:
+        resp["OK"] = False
+        resp["msg"] = str(ex)
+        return Response(resp)
+
+    room.notification_phone_number = request.data['phone']
+    room.threshold = request.data["newThreshold"]
+    room.save()
+    return Response(resp)
+
+
+@api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
 def rooms_info(request):
     response_body = []
     rooms = Room.objects.all()
@@ -50,7 +76,9 @@ def rooms_info(request):
                 'name': room.name,
                 'visits': room.visits / 2,
                 'lastCleaned': 'Never',
-                'needsCleaning': (room.visits / 2) > room.threshold
+                'threshold': room.thresold,
+                'needsCleaning': (room.visits / 2) > room.threshold,
+                'phone': room.notification_phone_number
             })
         else:
             response_body.append({
@@ -58,12 +86,16 @@ def rooms_info(request):
                 'name': room.name,
                 'visits': room.visits / 2,
                 'lastCleaned': last_cleaned.datetime,
-                'needsCleaning': (room.visits / 2) > room.threshold
+                'threshold': room.threshold,
+                'needsCleaning': (room.visits / 2) > room.threshold,
+                'phone': room.notification_phone_number
             })
 
     return JsonResponse(response_body, safe=False)
 
 
+@api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
 def fetch_weather_moss(resp):
     weather = Weather()
     temp, percp = weather.get_forecast("Østfold/Moss/Moss", url_path=True)
@@ -74,17 +106,30 @@ def fetch_weather_moss(resp):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class CleaningView(View):
+class CleaningView(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
     @staticmethod
     def get(request, room_id):
         cleaning_history = CleaningHistory.objects.filter(room_id=room_id)
-        resp_body = []
+        resp_body = {
+            "name": "",
+            "data": []
+        }
+        if not cleaning_history:
+            room_info = Room.objects.get(id=room_id)
+            resp_body["name"] = room_info.name
+        else:
+            resp_body["name"] = cleaning_history[0].room.name
+
         for cleaning_event in cleaning_history:
-            resp_body.append({
+            resp_body["data"].append({
                 "datetime": cleaning_event.datetime,
                 "visits": cleaning_event.number_of_visits,
                 "cleanedBy": get_users_full_name(cleaning_event.who),
-                "threshold": cleaning_event.threshold
+                "threshold": cleaning_event.threshold,
+                "comment": cleaning_event.comment
             })
         return JsonResponse(resp_body, safe=False)
 
@@ -95,7 +140,8 @@ class CleaningView(View):
                                       datetime=datetime.utcnow(),
                                       number_of_visits=room.visits / 2,
                                       threshold=room.threshold,
-                                      who=User.objects.get(username="admin"))
+                                      comment=request.data['comment'],
+                                      who=User.objects.get(username=request.user.username))
         room.visits = 0
         room.notification_sent = False
         logger.debug("Saving updated room object and adding entry to history")
@@ -145,11 +191,13 @@ def receive_event(request, subscriber_id, eid):
 
 @csrf_exempt
 def receive_event_new(request, **kwargs):
+    print('123')
     # kwargs example
-    # 'subscriber_id': '4b516f57-0097-4789-8cbd-45ff25ea9809',
-    # 'oid': '2331930e-b78c-499e-8236-cbb38c19d9a2',
-    # 'eid': 'door_activity_cb44b166-0d3a-49cc-bcec-d88e354640bd'
+    # 'subscriber_id': '4b516f57-0097-4789-8cbd-45ff25ea9809', // VAS internal id
+    # 'oid': '2331930e-b78c-499e-8236-cbb38c19d9a2', // oid of thing sending the event
+    # 'eid': 'door_activity_cb44b166-0d3a-49cc-bcec-d88e354640bd' // event id
     if request.method == 'PUT':
+
         eid = None
         oid = None
         if 'eid' in kwargs:
@@ -165,9 +213,15 @@ def receive_event_new(request, **kwargs):
         else:
             logger.info(f"Adding event to existing room {room[0].name}")
 
-        event = Event(time_of_event=parse_datetime(json_data['timestamp']),
-                      door_state=json_data['value'],
-                      event_id=room[0])
+        if eid == 'entry':
+            state = True if json_data['event'] == 1 else False
+            event = Event(time_of_event=parse_datetime(json_data['timestamp']),
+                          door_state=state,
+                          event_id=room[0])
+        else:
+            event = Event(time_of_event=parse_datetime(json_data['timestamp']),
+                          door_state=json_data['value'],
+                          event_id=room[0])
         room[0].visits += 1
         room[0].save()
         event.save()

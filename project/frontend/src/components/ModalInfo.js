@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
-import {Button, Glyphicon, ListGroup, ListGroupItem, Modal} from 'react-bootstrap';
+import {Button, FormControl, Glyphicon, ListGroup, ListGroupItem, Modal} from 'react-bootstrap';
 import PropTypes from "prop-types";
 import {Cookies} from 'react-cookie';
+import getAuthHeader from "../util/auth";
+import handleHTTPError from "../util/ErrorHandle";
 
 const GlyphOK = () => {
     return (<Glyphicon glyph="ok" className={"green"}/>);
@@ -23,6 +25,14 @@ class ModalInfo extends Component {
     constructor(props) {
         super(props);
         this.updateRoom = this.updateRoom.bind(this);
+        this.updateComment = this.updateComment.bind(this);
+        this.props.room.comment = this.props.room.comment ? this.props.room.comment : "No comment";
+        this.state = this.props.room;
+        this.setState({comment: "No comment"})
+    }
+
+    updateComment(event){
+        this.setState({comment: event.target.value})
     }
 
     updateRoom() {
@@ -33,11 +43,21 @@ class ModalInfo extends Component {
                 method: "POST",
                 credentials: "include",
                 headers: {
+                    "Authorization": getAuthHeader(),
                     'Content-Type': 'application/json',
                     'X-CSRFToken': csrf,
                 },
-                body: JSON.stringify(this.props.room)
-            }).then(value => value.json());
+                body: JSON.stringify(this.state)
+            }).then(response => {
+                handleHTTPError(response);
+                return;
+            }).catch(err => {
+                if (err.message === "401") {
+                    this.props.history.push('/')
+                } else {
+                    console.log(err)
+                }
+            });
             this.props.toggleInfo();
             this.props.updateRoom();
         })();
@@ -58,8 +78,10 @@ class ModalInfo extends Component {
                         </ListGroupItem>
                         <ListGroupItem header="Number of room visits">{this.props.room.visits}</ListGroupItem>
                         <ListGroupItem header="Last Cleaned">{this.props.room.lastCleaned.toString()}</ListGroupItem>
-                        <ListGroupItem
-                            header="Comment">{this.props.room.comment ? this.props.room.comment : "No comment"}</ListGroupItem>
+                        <ListGroupItem header="Comment">
+                            <FormControl componentClass="textarea" placeholder="Please enter your comment here" onChange={this.updateComment}/>
+                            {/*{}*/}
+                        </ListGroupItem>
                     </ListGroup>
                 </Modal.Body>
                 <Modal.Footer>

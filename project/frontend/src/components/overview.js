@@ -3,6 +3,10 @@ import {Col, Row, Table} from 'react-bootstrap';
 import RoomInfo from "./overviewRow";
 import update from 'immutability-helper';
 import moment from 'moment';
+import getAuthHeader from "../util/auth";
+import {handleHTTPError} from "../util/ErrorHandle";
+import {checkAuthTokenAndRedirect} from "../util/ErrorHandle";
+
 
 class Overview extends Component {
 
@@ -17,9 +21,9 @@ class Overview extends Component {
         };
         this.cleanRoom = this.cleanRoom.bind(this);
         this.updateRoomInfo = this.updateRoomInfo.bind(this);
-        if (this.state.loggedIn === false){
+        if (this.state.loggedIn === false) {
             // eslint-disable-next-line react/prop-types
-            this.props.history.push( '/')
+            this.props.history.push('/')
         }
     }
 
@@ -39,30 +43,40 @@ class Overview extends Component {
     updateRoomInfo() {
         fetch('/adapter/room-overview', {
             credentials: "include",
-            headers: {}
-        }).then(value => {
-            return value.json();
+            headers: {
+                "Authorization": getAuthHeader(),
+            }
+        }).then(response => {
+            handleHTTPError(response);
+            return response.json();
         }).then(json => {
             let roomOverview = json;
             for (let room of roomOverview) {
-                if(room['lastCleaned'] !== 'Never'){
+                if (room['lastCleaned'] !== 'Never') {
                     room['lastCleaned'] = moment(room['lastCleaned']).fromNow();
                 }
             }
             this.setState({rooms: roomOverview})
+        }).catch(err => {
+            checkAuthTokenAndRedirect.call(this, err);
+
         })
     }
 
     fetchWeather() {
         fetch('/adapter/weather', {
             credentials: "include",
-            headers: {}
-        }).then(value => {
-            return value.json();
+            headers: {
+                "Authorization": getAuthHeader(),
+            }
+        }).then(response => {
+            handleHTTPError(response);
+            return response.json();
         }).then(json => {
+            console.log(json);
             this.setState({weather: json})
-        }).catch(reason => {
-            console.log(reason)
+        }).catch(err => {
+            checkAuthTokenAndRedirect.call(this, err);
         })
     }
 
@@ -71,11 +85,11 @@ class Overview extends Component {
         this.fetchWeather();
     }
 
-    getWeather(){
+    getWeather() {
         let weatherString = "";
-        if(this.state.weather !== null){
+        if (this.state.weather !== null) {
             weatherString = `${this.state.weather.temp}° og ${this.state.weather.percp} mm. nedbør`
-        }else{
+        } else {
             weatherString = "Weather not available";
         }
         return weatherString;

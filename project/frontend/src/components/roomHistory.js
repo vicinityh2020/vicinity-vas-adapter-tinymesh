@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import {Col, ListGroup, ListGroupItem, PageHeader, Row} from 'react-bootstrap';
 import InfoPane from './panel'
 import moment from 'moment';
+import {handleHTTPError} from "../util/ErrorHandle";
+import {checkAuthTokenAndRedirect} from "../util/ErrorHandle";
 
 class RoomHistory extends Component {
     static propTypes = {
@@ -14,16 +16,22 @@ class RoomHistory extends Component {
         super(props);
         this.state = {
             history: null,
+            name: ""
         }
     }
 
     async fetchHistory() {
         await fetch(`/adapter/clean-room/${this.props.match.params.roomNumber}`, {
-            method: 'GET'
-        }).then(value => {
-            return value.json()
+            method: 'GET',
+            headers: {
+                "Authorization": `Token ${localStorage.getItem('token')}`
+            }
+        }).then(response => {
+            handleHTTPError(response);
+            return response.json()
         }).then(json => {
-            json.sort((a, b) => {
+            this.setState({name: json.name});
+            json.data.sort((a, b) => {
                 // + sign before date forces to get unix timestamp
                 if (+(new Date(a.datetime) > +(new Date(b.datetime)))) {
                     return -1
@@ -34,6 +42,12 @@ class RoomHistory extends Component {
                 }
             });
             this.setState({history: json})
+        }).catch(err => {
+            if (err.message === "401"){
+                this.props.history.push( '/')
+            }else {
+                console.log(err)
+            }
         })
     }
 
@@ -44,14 +58,15 @@ class RoomHistory extends Component {
     renderHistory() {
         let keyIndex = 0;
         let history = this.state.history;
-        return history.map(value => {
+        return history.data.map(value => {
+            let dt = moment(value.datetime).format("ddd D MMM, hh:mm A");
             return (
                 <Col xs={12} key={keyIndex++}>
                     <InfoPane
-                        heading={this.infoHeading(value)}>
+                        heading={dt}>
                         <ListGroup>
                             <ListGroupItem header={'Date'}>
-                                {moment(value.datetime).toString()}
+                                {dt}
                             </ListGroupItem>
                             <ListGroupItem header={'Number of visits before cleaning'}>
                                 {value.visits}
@@ -87,10 +102,10 @@ class RoomHistory extends Component {
             <Row>
                 <Col xs={12}>
                     <PageHeader>
-                        History for Room {this.props.match.params.roomNumber}
+                        History for: {this.state.name ? this.state.name : "loading..."}
                     </PageHeader>
                 </Col>
-                {this.state.history ? this.renderHistory() : this.noEvents()}
+                {this.state.history.data.length !== 0 ? this.renderHistory() : this.noEvents()}
             </Row>
         )
     }
