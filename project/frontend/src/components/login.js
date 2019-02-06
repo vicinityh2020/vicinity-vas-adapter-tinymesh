@@ -8,7 +8,8 @@ class Login extends Component {
         this.state = {
             username: "",
             password: "",
-            loggedIn: localStorage.getItem('token') ? true : false
+            loggedIn: localStorage.getItem('token') ? true : false,
+            success: false
         };
 
         this.changePass = this.changePass.bind(this);
@@ -24,6 +25,7 @@ class Login extends Component {
         return (
             <Row>
                 <Col xs={12} lg={12}>
+                    {!this.state.success ?
                     <Form horizontal>
                         <FormGroup controlId="formHorizontalEmail">
                             <Col componentClass={ControlLabel} xs={2} lg={3}>
@@ -49,6 +51,7 @@ class Login extends Component {
                             </Col>
                         </FormGroup>
                     </Form>
+                        : <a href="/overview">Successfully logged in, go to overview</a>}
                 </Col>
             </Row>
         );
@@ -74,10 +77,13 @@ class Login extends Component {
                 "username": this.state.username
             })
         }).then(value => {
+            console.log(value);
+            // console.log(value.text());
             return value.json();
         }).then(json => {
             localStorage.setItem("token", json.token);
-            this.props.history.push('/overview');
+            // this.props.history.push('/overview');
+            this.setState({success: true})
         }).catch(reason => console.log(reason))
     }
 }

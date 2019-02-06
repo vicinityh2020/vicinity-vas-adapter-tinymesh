@@ -46,6 +46,7 @@ class CleaningHistory(models.Model):
     number_of_visits = models.IntegerField()
     threshold = models.IntegerField()
     who = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.TextField(null=True)
 
 
 def get_users_full_name(user):

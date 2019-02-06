@@ -6,6 +6,7 @@ import RoomHistory from './components/roomHistory';
 import Header from "./components/header";
 import Login from "./components/login";
 import './index.css';
+import RoomSettings from "./components/roomSettings";
 
 
 class App extends Component {
@@ -19,18 +20,20 @@ class App extends Component {
 
     render() {
         return (
-            <Grid>
-                <Row>
-                    <Header/>
-                </Row>
-                <BrowserRouter basename={'/'}>
+            <BrowserRouter basename={'/'}>
+                <Grid>
+                    <Row>
+                        <Header/>
+                    </Row>
                     <Switch>
                         <Route exact path={'/'} component={Login}/>
                         <Route path={'/overview'} exact={true} component={Overview}/>
                         <Route path={'/overview/:roomNumber'} exact={true} component={RoomHistory}/>
+                        <Route path={'/settings'} exact={true} component={RoomSettings}/>
                     </Switch>
-                </BrowserRouter>
-            </Grid>
+                </Grid>
+            </BrowserRouter>
+
         );
     }
 }
