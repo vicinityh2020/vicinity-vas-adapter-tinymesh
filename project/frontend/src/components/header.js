@@ -66,17 +66,17 @@ class Header extends Component {
                     <Navbar.Toggle/>
                 </Navbar.Header>
                 {logInStatus ? <Navbar.Text>
-                    Logged in as: {this.state.user}
+                    Bruker: {this.state.user}
                 </Navbar.Text> : <Navbar.Text>
-                    <a to={"/"}>Please log in</a>
+                    <a to={"/"}>Logg inn</a>
                 </Navbar.Text>}
                 <Navbar.Collapse>
                     <Nav pullRight>
                         <NavItem eventKey={1} href="/overview">
-                            Overview
+                            Oversikt
                         </NavItem>
                         <NavItem eventKey={2} href="/settings">
-                            Settings
+                            Innstilinger
                         </NavItem>
                         {this.state.user === 'admin' ? <NavItem eventKey={3} href={'/adapter/admin'}>
                             Admin

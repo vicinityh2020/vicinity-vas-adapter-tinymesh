@@ -26,9 +26,9 @@ class ModalInfo extends Component {
         super(props);
         this.updateRoom = this.updateRoom.bind(this);
         this.updateComment = this.updateComment.bind(this);
-        this.props.room.comment = this.props.room.comment ? this.props.room.comment : "No comment";
+        this.props.room.comment = this.props.room.comment ? this.props.room.comment : "Ingen kommentar";
         this.state = this.props.room;
-        this.setState({comment: "No comment"})
+        this.setState({comment: "Ingen kommentar"})
     }
 
     updateComment(event){
@@ -73,21 +73,21 @@ class ModalInfo extends Component {
                     <ListGroup>
                         <ListGroupItem header="Status" bsStyle={this.props.room.needsCleaning ? 'danger' : 'success'}>
                             {this.props.room.needsCleaning ?
-                                (<span><GlyphNotOk/> Needs cleaning</span>) :
-                                (<span><GlyphOK/> Clean</span>)}
+                                (<span><GlyphNotOk/> Trenger vask</span>) :
+                                (<span><GlyphOK/> Ren</span>)}
                         </ListGroupItem>
-                        <ListGroupItem header="Number of room visits">{this.props.room.visits}</ListGroupItem>
-                        <ListGroupItem header="Last Cleaned">{this.props.room.lastCleaned.toString()}</ListGroupItem>
-                        <ListGroupItem header="Comment">
-                            <FormControl componentClass="textarea" placeholder="Please enter your comment here" onChange={this.updateComment}/>
+                        <ListGroupItem header="Antall besøk">{this.props.room.visits}</ListGroupItem>
+                        <ListGroupItem header="Sist vask">{this.props.room.lastCleaned.toString()}</ListGroupItem>
+                        <ListGroupItem header="Kommentar">
+                            <FormControl componentClass="textarea" placeholder="Skriv kommentaren din her" onChange={this.updateComment}/>
                             {/*{}*/}
                         </ListGroupItem>
                     </ListGroup>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button bsStyle={"primary"}
-                            onClick={this.updateRoom}>Clean</Button>
-                    <Button onClick={this.props.toggleInfo}>Close</Button>
+                            onClick={this.updateRoom}>Registrer vask</Button>
+                    <Button onClick={this.props.toggleInfo}>Lukk</Button>
                 </Modal.Footer>
             </Modal>
         );
