@@ -76,22 +76,24 @@ class CalendarView extends Component {
     render() {
         return (
             <Row>
-                <Row>
-                    <Col lg={12} xs={12} md={12} sm={12}>
-                        <PageHeader>{this.state.history ? this.state.history.name : "Loading..."}</PageHeader>
-                    </Col>
-                </Row>
-                {this.state.data && this.state.labels ? <Col lg={6} smHidden={true} xsHidden={true}>
-                    <Bar data={
-                        {
-                            labels: this.state.labels,
-                            datasets: [{
-                                label: '# of visits before cleaning',
-                                data: this.state.data,
-                            }]
-                        }
-                    } options={this.state.options} width={560} height={250}/>
-                </Col> : <Col lg={6} lgOffset={3}>Loading...</Col>}
+                <Col lg={12} xs={12} md={12} sm={12}>
+                    <PageHeader>{this.state.history ? this.state.history.name : "Loading..."}</PageHeader>
+                </Col>
+                {this.state.data && this.state.labels ?
+                    <Col lg={6} smHidden={true} xsHidden={true}>
+                        <Bar data={
+                            {
+                                labels: this.state.labels,
+                                datasets: [{
+                                    label: 'Antall besøk før vask var utført',
+                                    data: this.state.data,
+                                }]
+                            }
+                        } options={this.state.options} width={560} height={250}/>
+                        <p>Viser histrikk av alle vask sortert
+                        etter dato, høyde er antall besøk før vask var utført</p>
+                    </Col> :
+                    <Col lg={6} lgOffset={3}>Loading...</Col>}
                 {this.state.history ?
                     <Col lg={6}><RoomHistory history={this.state.history}/></Col> :
                     <Col lg={6} lgOffset={3}>Loading...</Col>}

@@ -92,9 +92,9 @@ class RoomSettings extends Component {
                             <thead>
                             <tr>
 
-                                <th>Room Name</th>
-                                <th>Current Threshold</th>
-                                <th>Notification Number</th>
+                                <th>Rom Navn</th>
+                                <th>Nåværende Threshold</th>
+                                <th>Nummer for varslinger</th>
                                 <th></th>
                             </tr>
                             </thead>
@@ -104,7 +104,7 @@ class RoomSettings extends Component {
                             })}
                             </tbody>
                         </Table>
-                    ) : "Nothing to show"}
+                    ) : "Ingenting å vise"}
                 </Col>
             </Row>
         )
@@ -134,9 +134,8 @@ class RoomSettingRow extends Component {
     updateSettings() {
         let threshold = parseInt(this.state.threshold, 10);
         if (!threshold || threshold <= 0) {
-            this.props.showError("Error: invalid value");
+            this.props.showError("Feil: feil verdi");
         } else {
-            console.log(`${threshold} is of type ${typeof threshold}`);
             fetch("/adapter/update_room_settings", {
                 method: 'POST',
                 headers: {
@@ -154,8 +153,7 @@ class RoomSettingRow extends Component {
             }).then(json => {
                 console.log(json);
                 if (json.OK) {
-                    this.props.showOK("Saved Successfully!");
-                    console.log("Update ok")
+                    this.props.showOK("Lagret!");
                 } else {
                     if (json.msg) {
                         this.props.showError("Server Error: " + json.msg);
@@ -168,7 +166,7 @@ class RoomSettingRow extends Component {
                     this.props.history.push('/')
                 } else {
                     console.log(reason);
-                    this.props.showError("Error: Problems sending data to server");
+                    this.props.showError("Feil: feil under kommunikasjon med server!");
                 }
             })
         }
@@ -191,14 +189,14 @@ class RoomSettingRow extends Component {
                 <FormControl
                     id="formControlsText"
                     type="string"
-                    label="Phone"
+                    label="Telefon"
                     value={this.state.phone}
                     onChange={this.updatePhone}
                 />
             </td>
             <td>
                 <Button bsStyle={"primary"} onClick={this.updateSettings}>
-                    Save
+                    Lagre
                 </Button>
             </td>
         </tr>)

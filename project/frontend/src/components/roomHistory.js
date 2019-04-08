@@ -52,7 +52,7 @@ class RoomHistory extends Component {
     // }
 
     infoHeading(cleaningEvent) {
-        return cleaningEvent.cleanedBy + " at " + moment(cleaningEvent.datetime).toString()
+        return cleaningEvent.cleanedBy + " | " + moment(cleaningEvent.datetime).toString()
     }
 
     renderHistory() {
@@ -65,20 +65,20 @@ class RoomHistory extends Component {
                     <InfoPane
                         heading={dt}>
                         <ListGroup>
-                            <ListGroupItem header={'Date'}>
+                            <ListGroupItem header={'Dato'}>
                                 {dt}
                             </ListGroupItem>
-                            <ListGroupItem header={'Number of visits before cleaning'}>
+                            <ListGroupItem header={'Antall besøk når vask var utført'}>
                                 {value.visits}
                             </ListGroupItem>
-                            <ListGroupItem header={'Cleaning done by'}>
+                            <ListGroupItem header={'Vask utført av'}>
                                 {value.cleanedBy}
                             </ListGroupItem>
                             <ListGroupItem header={'Threshold'}>
                                 {value.threshold}
                             </ListGroupItem>
-                            <ListGroupItem header={'Comment'}>
-                                {value.comment ? value.comment : "No comment"}
+                            <ListGroupItem header={'kommentar'}>
+                                {value.comment ? value.comment : "Ingen kommentar"}
                             </ListGroupItem>
                         </ListGroup>
                     </InfoPane>
@@ -91,7 +91,7 @@ class RoomHistory extends Component {
         return (
             <Row>
                 <Col xs={12}>
-                    <h3>Loading...</h3>
+                    <h3>Vent litt, laster innholdet...</h3>
                 </Col>
             </Row>
         )

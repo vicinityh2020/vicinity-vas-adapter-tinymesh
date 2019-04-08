@@ -33,7 +33,7 @@ class Login extends Component {
                         <Form horizontal>
                             <FormGroup controlId="formHorizontalText">
                                 <Col componentClass={ControlLabel} xs={2} lg={3}>
-                                    Username
+                                    Brukernavn
                                 </Col>
                                 <Col xs={12} lg={6}>
                                     <FormControl type="email" onChange={this.changeLogin} placeholder="Username"/>
@@ -42,7 +42,7 @@ class Login extends Component {
 
                             <FormGroup controlId="formHorizontalPassword">
                                 <Col componentClass={ControlLabel} xs={2} lg={3}>
-                                    Password
+                                    Passord
                                 </Col>
                                 <Col xs={12} lg={6}>
                                     <FormControl type="password" onChange={this.changePass} placeholder="Password"/>
@@ -51,11 +51,11 @@ class Login extends Component {
 
                             <FormGroup>
                                 <Col xs={3} lg={1} lgOffset={3}>
-                                    <Button type="button" onClick={this.handleSubmit}>Sign in</Button>
+                                    <Button type="button" onClick={this.handleSubmit}>Log in</Button>
                                 </Col>
                             </FormGroup>
                         </Form>
-                        : <a href="/overview">Successfully logged in, go to overview</a>}
+                        : <a href="/overview">Logget inn, click her for å forsette</a>}
                 </Col>
             </Row>
         );
@@ -99,7 +99,7 @@ class Login extends Component {
                 } else {
                     this.setState({
                         authErr: true,
-                        authErrMsg: "Auth error."
+                        authErrMsg: "Auth feil."
                     })
                 }
             }

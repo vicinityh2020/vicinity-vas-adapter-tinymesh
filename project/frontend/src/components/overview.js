@@ -99,17 +99,17 @@ class Overview extends Component {
         return (
             <Row>
                 <Col xs={12}>
-                    <h4>Weather for today in Moss:</h4><h5>{this.getWeather()}</h5>
+                    <h4>Vær for i dag i Moss:</h4><h5>{this.getWeather()}</h5>
                 </Col>
                 <Col xs={12}>
                     {this.state.rooms ? (
                         <Table striped={true} condensed={true}>
                             <thead>
                             <tr>
-                                <th className={"center"}>Room</th>
-                                <th className={"center"}>Visits</th>
-                                <th className={"center"}>Cleaned</th>
-                                <th className={"center"}>Clean?</th>
+                                <th className={"center"}>Rom</th>
+                                <th className={"center"}>Besøk</th>
+                                <th className={"center"}>Sist Vask</th>
+                                <th className={"center"}>Ren?</th>
                                 <th className={"center"}>Info</th>
                             </tr>
                             </thead>
@@ -119,7 +119,7 @@ class Overview extends Component {
                                                   updateRooms={this.updateRoomInfo}/>)
                             })}
                             </tbody>
-                        </Table>) : (<p>Nothing to show</p>)}
+                        </Table>) : (<p>Ingenting å vise eller server feil</p>)}
                 </Col>
             </Row>
         );
