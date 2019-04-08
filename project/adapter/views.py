@@ -76,7 +76,7 @@ def rooms_info(request):
                 'name': room.name,
                 'visits': room.visits / 2,
                 'lastCleaned': 'Never',
-                'threshold': room.thresold,
+                'threshold': room.threshold,
                 'needsCleaning': (room.visits / 2) > room.threshold,
                 'phone': room.notification_phone_number
             })

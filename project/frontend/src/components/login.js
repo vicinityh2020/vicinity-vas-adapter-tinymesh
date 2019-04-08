@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Button, Col, ControlLabel, Form, FormControl, FormGroup, Row} from "react-bootstrap";
+import {AlertDismissible} from "./alertDismissible";
 
 class Login extends Component {
     constructor(props) {
@@ -9,7 +10,9 @@ class Login extends Component {
             username: "",
             password: "",
             loggedIn: localStorage.getItem('token') ? true : false,
-            success: false
+            success: false,
+            authErr: false,
+            authErrMsg: "",
         };
 
         this.changePass = this.changePass.bind(this);
@@ -25,32 +28,33 @@ class Login extends Component {
         return (
             <Row>
                 <Col xs={12} lg={12}>
+                    {this.state.authErr ? <AlertDismissible type={"danger"} message={this.state.authErrMsg}/> : ""}
                     {!this.state.success ?
-                    <Form horizontal>
-                        <FormGroup controlId="formHorizontalEmail">
-                            <Col componentClass={ControlLabel} xs={2} lg={3}>
-                                Email
-                            </Col>
-                            <Col xs={12} lg={6}>
-                                <FormControl type="email" onChange={this.changeLogin} placeholder="Email"/>
-                            </Col>
-                        </FormGroup>
+                        <Form horizontal>
+                            <FormGroup controlId="formHorizontalText">
+                                <Col componentClass={ControlLabel} xs={2} lg={3}>
+                                    Username
+                                </Col>
+                                <Col xs={12} lg={6}>
+                                    <FormControl type="email" onChange={this.changeLogin} placeholder="Username"/>
+                                </Col>
+                            </FormGroup>
 
-                        <FormGroup controlId="formHorizontalPassword">
-                            <Col componentClass={ControlLabel} xs={2} lg={3}>
-                                Password
-                            </Col>
-                            <Col xs={12} lg={6}>
-                                <FormControl type="password" onChange={this.changePass} placeholder="Password"/>
-                            </Col>
-                        </FormGroup>
+                            <FormGroup controlId="formHorizontalPassword">
+                                <Col componentClass={ControlLabel} xs={2} lg={3}>
+                                    Password
+                                </Col>
+                                <Col xs={12} lg={6}>
+                                    <FormControl type="password" onChange={this.changePass} placeholder="Password"/>
+                                </Col>
+                            </FormGroup>
 
-                        <FormGroup>
-                            <Col xs={3} lg={1} lgOffset={3}>
-                                <Button type="submit" onClick={this.handleSubmit}>Sign in</Button>
-                            </Col>
-                        </FormGroup>
-                    </Form>
+                            <FormGroup>
+                                <Col xs={3} lg={1} lgOffset={3}>
+                                    <Button type="button" onClick={this.handleSubmit}>Sign in</Button>
+                                </Col>
+                            </FormGroup>
+                        </Form>
                         : <a href="/overview">Successfully logged in, go to overview</a>}
                 </Col>
             </Row>
@@ -76,15 +80,32 @@ class Login extends Component {
                 "password": this.state.password,
                 "username": this.state.username
             })
-        }).then(value => {
-            console.log(value);
-            // console.log(value.text());
-            return value.json();
+        }).then(response => {
+            console.log(response);
+            // handleHTTPError(response);
+            return response.json();
         }).then(json => {
-            localStorage.setItem("token", json.token);
-            // this.props.history.push('/overview');
-            this.setState({success: true})
-        }).catch(reason => console.log(reason))
+            console.log(json);
+            if (json.error) {
+                console.log(json.error);
+                this.setState({
+                    authErr: true,
+                    authErrMsg: json.error
+                })
+            } else {
+                if (json.token) {
+                    localStorage.setItem("token", json.token);
+                    this.setState({success: true})
+                } else {
+                    this.setState({
+                        authErr: true,
+                        authErrMsg: "Auth error."
+                    })
+                }
+            }
+        }).catch(reason => {
+
+        })
     }
 }
 

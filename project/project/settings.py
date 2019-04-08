@@ -22,7 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '-wy+)!lmoy-(u-%!44n&658ul*c)^oogo3yavbg1^x^6art%15'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["0.0.0.0", "192.168.1.147", "localhost", "192.168.1.100", "127.0.0.1", "192.168.0.119"]
 APPEND_SLASH = True
@@ -154,10 +154,10 @@ LOGGING = {
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 STATIC_URL = '/static/'
 REACT_APP_DIR = os.path.join(BASE_DIR, 'frontend')
-STATIC_ROOT = os.path.join(BASE_DIR, 'frontend', 'build', 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'frontend', 'build')
 
 STATICFILES_DIRS = [
-    # os.path.join(REACT_APP_DIR, 'build', 'static'),
+    os.path.join(REACT_APP_DIR, 'build', 'static'),
 ]
 
 # CORS_ALLOW_CREDENTIALS = True
