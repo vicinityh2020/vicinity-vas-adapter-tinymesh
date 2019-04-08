@@ -7,49 +7,49 @@ import {handleHTTPError} from "../util/ErrorHandle";
 import {checkAuthTokenAndRedirect} from "../util/ErrorHandle";
 
 class RoomHistory extends Component {
-    static propTypes = {
-        match: PropTypes.any.isRequired
-    };
+    // static propTypes = {
+    //     // match: PropTypes.any.isRequired
+    // };
 
 
     constructor(props) {
         super(props);
         this.state = {
-            history: null,
-            name: ""
+            history: this.props.history,
+            name: "",
         }
     }
 
-    async fetchHistory() {
-        await fetch(`/adapter/clean-room/${this.props.match.params.roomNumber}`, {
-            method: 'GET',
-            headers: {
-                "Authorization": `Token ${localStorage.getItem('token')}`
-            }
-        }).then(response => {
-            handleHTTPError(response);
-            return response.json()
-        }).then(json => {
-            this.setState({name: json.name});
-            json.data.sort((a, b) => {
-                // + sign before date forces to get unix timestamp
-                if (+(new Date(a.datetime) > +(new Date(b.datetime)))) {
-                    return -1
-                } else if (+(new Date(a.datetime) === +(new Date(b.datetime)))) {
-                    return 0
-                } else {
-                    return 1
-                }
-            });
-            this.setState({history: json})
-        }).catch(err => {
-            if (err.message === "401"){
-                this.props.history.push( '/')
-            }else {
-                console.log(err)
-            }
-        })
-    }
+    // async fetchHistory() {
+    //     await fetch(`/adapter/clean-room/${this.props.match.params.roomNumber}`, {
+    //         method: 'GET',
+    //         headers: {
+    //             "Authorization": `Token ${localStorage.getItem('token')}`
+    //         }
+    //     }).then(response => {
+    //         handleHTTPError(response);
+    //         return response.json()
+    //     }).then(json => {
+    //         this.setState({name: json.name});
+    //         json.data.sort((a, b) => {
+    //             // + sign before date forces to get unix timestamp
+    //             if (+(new Date(a.datetime) > +(new Date(b.datetime)))) {
+    //                 return -1
+    //             } else if (+(new Date(a.datetime) === +(new Date(b.datetime)))) {
+    //                 return 0
+    //             } else {
+    //                 return 1
+    //             }
+    //         });
+    //         this.setState({history: json})
+    //     }).catch(err => {
+    //         if (err.message === "401"){
+    //             this.props.history.push( '/')
+    //         }else {
+    //             console.log(err)
+    //         }
+    //     })
+    // }
 
     infoHeading(cleaningEvent) {
         return cleaningEvent.cleanedBy + " at " + moment(cleaningEvent.datetime).toString()
@@ -100,18 +100,18 @@ class RoomHistory extends Component {
     loaded() {
         return (
             <Row>
-                <Col xs={12}>
-                    <PageHeader>
-                        History for: {this.state.name ? this.state.name : "loading..."}
-                    </PageHeader>
-                </Col>
+                {/*<Col xs={12}>*/}
+                    {/*<PageHeader>*/}
+                        {/*History for: {this.state.history ? this.state.history.name : "loading..."}*/}
+                    {/*</PageHeader>*/}
+                {/*</Col>*/}
                 {this.state.history.data.length !== 0 ? this.renderHistory() : this.noEvents()}
             </Row>
         )
     }
 
     componentDidMount() {
-        (async () => await this.fetchHistory())()
+        // (async () => await this.fetchHistory())()
     }
 
     noEvents() {

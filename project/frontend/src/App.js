@@ -7,6 +7,7 @@ import Header from "./components/header";
 import Login from "./components/login";
 import './index.css';
 import RoomSettings from "./components/roomSettings";
+import CalendarView from "./components/Calendar/CalendarView";
 
 
 class App extends Component {
@@ -27,8 +28,9 @@ class App extends Component {
                     </Row>
                     <Switch>
                         <Route exact path={'/'} component={Login}/>
+                        {/*<Route exact path={'/calendar'} component={CalendarView}/>*/}
                         <Route path={'/overview'} exact={true} component={Overview}/>
-                        <Route path={'/overview/:roomNumber'} exact={true} component={RoomHistory}/>
+                        <Route path={'/overview/:roomNumber'} exact={true} component={CalendarView}/>
                         <Route path={'/settings'} exact={true} component={RoomSettings}/>
                     </Switch>
                 </Grid>
