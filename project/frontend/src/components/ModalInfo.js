@@ -50,7 +50,6 @@ class ModalInfo extends Component {
                 body: JSON.stringify(this.state)
             }).then(response => {
                 handleHTTPError(response);
-                return;
             }).catch(err => {
                 if (err.message === "401") {
                     this.props.history.push('/')

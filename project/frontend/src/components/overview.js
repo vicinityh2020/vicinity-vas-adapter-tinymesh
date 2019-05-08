@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
-import {Col, Row, Table} from 'react-bootstrap';
+import {Button, Col, Glyphicon, Row, Table} from 'react-bootstrap';
 import RoomInfo from "./overviewRow";
 import update from 'immutability-helper';
 import moment from 'moment';
 import getAuthHeader from "../util/auth";
 import {handleHTTPError} from "../util/ErrorHandle";
 import {checkAuthTokenAndRedirect} from "../util/ErrorHandle";
+import CleanAllRoomsWidget from "./cleanAllRoomsWidget";
 
 
 class Overview extends Component {
@@ -101,6 +102,7 @@ class Overview extends Component {
                 <Col xs={12}>
                     <h4>Vær for i dag i Moss:</h4><h5>{this.getWeather()}</h5>
                 </Col>
+                {this.state.rooms ? <CleanAllRoomsWidget rooms={this.state.rooms}/> : <span></span>}
                 <Col xs={12}>
                     {this.state.rooms ? (
                         <Table striped={true} condensed={true}>
