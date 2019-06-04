@@ -31,7 +31,7 @@ class RoomInfo extends Component {
         return (
             <tr key={this.props.room.number}>
                 <td className={"center"}><Link to={`/overview/${room.id}`}>{room.name}</Link></td>
-                <td className={"center"}>{room.visits}</td>
+                <td className={"center"}>{Math.round(room.visits)}</td>
                 <td className={"center"}>{room.lastCleaned.toString()}</td>
                 <td className={"center"}>{room.needsCleaning ?
                     (<Glyphicon glyph="remove" className={"red"}/>) :

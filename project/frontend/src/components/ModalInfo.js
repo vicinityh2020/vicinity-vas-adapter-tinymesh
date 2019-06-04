@@ -75,7 +75,7 @@ class ModalInfo extends Component {
                                 (<span><GlyphNotOk/> Trenger vask</span>) :
                                 (<span><GlyphOK/> Ren</span>)}
                         </ListGroupItem>
-                        <ListGroupItem header="Antall besøk">{this.props.room.visits}</ListGroupItem>
+                        <ListGroupItem header="Antall besøk">{Math.round(this.props.room.visits)}</ListGroupItem>
                         <ListGroupItem header="Sist vask">{this.props.room.lastCleaned.toString()}</ListGroupItem>
                         <ListGroupItem header="Kommentar">
                             <FormControl componentClass="textarea" placeholder="Skriv kommentaren din her" onChange={this.updateComment}/>

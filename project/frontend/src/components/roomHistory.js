@@ -69,7 +69,7 @@ class RoomHistory extends Component {
                                 {dt}
                             </ListGroupItem>
                             <ListGroupItem header={'Antall besøk når vask var utført'}>
-                                {value.visits}
+                                {Math.round(value.visits)}
                             </ListGroupItem>
                             <ListGroupItem header={'Vask utført av'}>
                                 {value.cleanedBy}
