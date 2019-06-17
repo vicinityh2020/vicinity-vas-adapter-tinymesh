@@ -9,3 +9,7 @@
 .center{
     text-align: center;
 }
+
+.auto_width_table table{
+    table-layout: auto !important;
+}
