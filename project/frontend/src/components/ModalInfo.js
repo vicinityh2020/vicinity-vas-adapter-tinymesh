@@ -50,7 +50,6 @@ class ModalInfo extends Component {
                 body: JSON.stringify(this.state)
             }).then(response => {
                 handleHTTPError(response);
-                return;
             }).catch(err => {
                 if (err.message === "401") {
                     this.props.history.push('/')
@@ -76,7 +75,7 @@ class ModalInfo extends Component {
                                 (<span><GlyphNotOk/> Trenger vask</span>) :
                                 (<span><GlyphOK/> Ren</span>)}
                         </ListGroupItem>
-                        <ListGroupItem header="Antall besøk">{this.props.room.visits}</ListGroupItem>
+                        <ListGroupItem header="Antall besøk">{Math.round(this.props.room.visits)}</ListGroupItem>
                         <ListGroupItem header="Sist vask">{this.props.room.lastCleaned.toString()}</ListGroupItem>
                         <ListGroupItem header="Kommentar">
                             <FormControl componentClass="textarea" placeholder="Skriv kommentaren din her" onChange={this.updateComment}/>

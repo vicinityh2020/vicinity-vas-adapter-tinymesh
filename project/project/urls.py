@@ -20,12 +20,14 @@ from django.urls import path, include
 
 from auth import urls as endpoints
 from project import views
+from diagnostics import views as diag_views
 
 urlpatterns = [
     path('adapter/', include('adapter.urls')),
     path('adapter/admin', admin.site.urls),
     path('api/', include(endpoints)),
     path('api/auth/', include('knox.urls')),
+    path('diagnostics/get_last_event_by_id/<int:room_id>', diag_views.last_event_for_room_by_id),
     url(r'^', views.FrontendAppView.as_view())
 ]
 

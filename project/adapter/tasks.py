@@ -16,7 +16,7 @@ def room_check():
         return
 
     sms = KeySMS()
-    sms.auth(settings.KEYSMS_LOGIN, "c69abc621517b158d69786f270788a6d")
+    sms.auth(settings.KEYSMS_LOGIN, settings.KEYSMS_API_KEY)
 
     for room in uncleaned_rooms:
         send_notification(room, sms)
