@@ -24,7 +24,7 @@ SECRET_KEY = '-wy+)!lmoy-(u-%!44n&658ul*c)^oogo3yavbg1^x^6art%15'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["0.0.0.0", "192.168.1.147", "localhost", "192.168.1.100", "127.0.0.1", "192.168.0.119"]
+ALLOWED_HOSTS = []
 APPEND_SLASH = True
 # Application definition
 
@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'knox',
     'corsheaders',
-    'adapter'
+    'adapter',
+    'diagnostics'
 ]
 
 MIDDLEWARE = [
@@ -185,7 +186,7 @@ CELERY_BEAT_SCHEDULE = {
 # KeySMS Settings
 KEYSMS_LOGIN = os.environ.get('KEYSMS_LOGIN')
 KEYSMS_API_KEY = os.environ.get('KEYSMS_API_KEY')
-
+DASHBOARD_KEY = "PLACEHOLDER"
 
 REST_KNOX = {
   'TOKEN_TTL': None,

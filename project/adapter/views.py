@@ -18,6 +18,7 @@ from rest_framework.views import APIView
 from yr import Weather
 
 from adapter.models import Event, Room, CleaningHistory, get_users_full_name
+from diagnostics.models import KPIData
 
 logger = logging.getLogger("adapter")
 
@@ -225,5 +226,6 @@ def receive_event_new(request, **kwargs):
         room[0].visits += 1
         room[0].save()
         event.save()
+        KPIData.increment_msg_received()
         return JsonResponse({'ok': True})
     return JsonResponse({'ok': False}, status=403)
